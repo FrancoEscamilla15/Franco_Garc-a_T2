@@ -1,0 +1,184 @@
+---
+title: "Franco_García_T2"
+author: "Enrique Franco"
+date: "17/2/2022"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+1.  Considera las siguientes cantidades discute y justifica qué tipo de
+    distribución de probabilidad pueden tener las siguientes variables:
+
+<!-- -->
+
+a.  **El número (talla) de calzado de adultos varones en México.**
+
+    R = Se va a observar una distribución Gaussiana o de campana, esto
+    se debe a que gran parte de la población va a encontrarse entre las
+    tallas del 26 al 27, mientras que muy pocos hombres van a calzar por
+    debajo del numero 26 y de igual manera pocos calzaran por encima del
+    27
+
+b.  **La distribución de habitantes en asentamientos humanos de
+    México.**
+
+    R = Es una distribución logarítmica gracias a que el numero de
+    personas que habitan ciudades año con año aumenta, si comparáramos
+    la cantidad de habitantes que tenia Querétaro en el 2010 con la
+    cantidad de habitantes que tiene este año podremos ver un
+    crecimiento abismal en el cual en ningún momento existió una
+    decreció, dándonos una característica distribución logarítmica.
+
+c.  **La velocidad promedio de los automóviles en Bernardo Quintana a
+    las 9 de la mañana en un día laborable.**
+
+    R = Esta va a ser una distribución de cola larga, esto se debe a que
+    usualmente a esa hora existe mucho trafico sobre Bernardo Quintana,
+    entonces gran cantidad de personas van a ir a una velocidad lenta o
+    no muy rápida y solo muy pocos van a poder ir rápido gracias a que
+    van rebasando o buscando huecos entre los carros como pueden ser
+    motociclistas.
+
+d.  **La velocidad promedio de los automóviles en Bernardo Quintana a
+    las 3 de la mañana.**
+
+    R = Para este caso seguramente se tendrá una distribución de
+    probabilidad Gaussiana, esto debido a que la gran mayoría de coches
+    iran a 80 km/h que es el limite de velocidad, sin embargo, también
+    tendremos algunas personas que irán mucho más rápido que esa
+    velocidad y otras que irán más lento. Esto va a hacer que se forme
+    la característica campana de una distribución Gaussiana, en donde
+    tenemos a la mayoría de la población concentrada en el centro de la
+    gráfica y en los extremos presentamos "outliers" los cuales serán
+    individuos dentro de la población que salen de la normalidad.
+
+<!-- -->
+
+2.  Supongamos que tenemos dos nodos (A,B) en una red. El nodo A y B
+    tiene el mismo degree, pero el A tiene un coeficiente de
+    clusterización de 1 y el nodo B un coeficiente bajo.Dibuja está
+    situación y explica cuál sería una mejor diana si quieres
+    eliminarlos y afectar a la red.
+    
+    En caso de que quiera eliminar alguno la mejor opción sería el nodo A dado que este tiene una mayor cantidad de conexiones que el nodo B.
+
+    ![](RED.png "Red A-B")
+    
+
+3.  Elabora un programa en R que usando funciones calcule, a partir de
+    una matriz de adyacencia (Sólo utiliza R base para resolver este
+    problema)
+
+<!-- -->
+
+a.  Si la red es dirigida o no.
+b.  Si la red es pesada o no.
+c.  El degree de los nodos.
+d.  El histograma del degree.
+
+<!-- -->
+
+4.  A partir de la red de interacción de proteínas alojada en la
+    librería igraphdata, que puedes llamar mediante data(yeast) elabora
+    un programa en R (acá sí puedes usar librerías especializadas de R)
+    que:
+
+<!-- -->
+
+a.  **Calcule la distribución de conectividades y grafique esa
+    distribución . Discute tu resultado.**
+
+```{r}
+library(igraph)
+library(igraphdata)
+data("yeast") #Cargo las librerias que voy a utilizar así como la base de datos
+yeastdeg <- degree(yeast) #Con esta funcion visualizo las conexiones existentes entre las proteinas
+hist(yeastdeg) #Genero un histograma a partir de dichas conexiones
+yeastlog <- degree_distribution(yeast) #Con esto lo vi a escala logaritmica
+plot(yeastlog, log = "xy") #Lo grafico
+```
+
+DISCUSION: Podemos observar que para el histograma tenemos una
+distribucion de cola larga, esto se debe a que muy pocas proteínas
+tienen gran cantidad de conexiones y muchas proteínas tienen pocas
+conexiones, por otro lado, para la escala logaritmica al momento de que
+se grafica podemos presenciar una linea en diagonal bien formada con
+algo de ruido. b. Grafique el boxplot de la distribución de
+conectividades y discute tu resultado.
+
+```{r}
+yeastlog <- degree_distribution (yeast) #distribucion a escala logatitmica
+boxplot (yeastlog) #realizamos un boxplot
+```
+
+DISCUSION: De igual manera que como ocurre con el histograma vamos a
+poder observar que la mayoría de las proteínas se agrupan en los numeros
+inferiores y son pocos los outliers que podemos observar que sobrepasan
+el 0.05
+
+c.  **Encuentre la proporción de nodos que tienen 15 o más
+    conectividades.**
+
+```{r}
+yeastdeg <- degree(yeast) #Nuevamente observo las conexiones existentes entre las proteinas
+sort (yeastdeg, decreasing = T) #De esta manera ordeno de forma descendente dichas conexiones
+conex <- sort(yeastdeg, decreasing = T) [1:10]
+degree_distribution(yeast)
+```
+
+d.  **Calcule el degree máximo de la red.**
+
+```{r}
+degree(yeast) #Con esta funcion calculo el degree
+```
+
+e.  **Calcule el diámetro**
+
+```{r}
+diameter(yeast)#Con esta funcion puedo observar el diametro
+```
+
+f.  **La trayectoria más larga.**
+
+```{r}
+distance_table (yeast) #Con esto puedo calcular la longitud de las distancias de todos los caminos mas cortos entre los vertices de la red
+mean_distance (yeast) #Calculo el promedio de las distancias de la red
+```
+
+g.  **Elimine los 10 nodos más conectados de la red y determine el
+    diámetro cada vez que lo haga.**
+
+```{r}
+sort (yeastdeg, decreasing = T) #Como lo habia hecho anteriormente, los ordeno de manera descendente 
+nodos <- sort(yeastdeg, decreasing = T) [1:10] #Con esto selecciono los 10 primeros nodos (con ayuda de los corchetes yo indico cuantos quiero)
+nodos <- c() #Es necesario que lo convierta en un vector vacio para que así R sea capaz de guardar los diametros
+nodos [1] <- diameter (yeast) #Uso esta funcion y coloco el numero 1 al principio para indicar que va a ser el primer elemento del verctor el que al que se le realice la operación, en este caso calcular el diametro
+diameter (delete_vertices (yeast, nodos)) #Finalmente con esta funcion voy eliminando los 10 nodos con mayor conectividad y su diametro
+
+```
+
+h.  **Determine los diez nodos más importantes por al menos tres medidas
+    de centralidad.**
+
+```{r}
+nodos <- sort(yeastdeg, decreasing = T) [1:10] #Con esto mediante los corchetes puedo ver los 10 primeros
+```
+
+i.  **Clusterizar la red por al menos dos métodos y determinar el tamaño
+    del clúster más grande.**
+
+```{r}
+
+```
+
+j.  **Determine si la red es de mundo pequeño, ultra pequeño u otra.**
+
+```{r}
+distances (yeast) #Con esto visualizo las distancias
+View (distances (yeast)) #En caso de que se quieran ver las distancias por separado
+mean (distances(yeast)) #Calculo el promedio de las distancias
+
+#Es importante mencionar que la red es no dirigida y el promedio da infinito debbido a que dentro de la matriz tenemos algunos infinitos, es decir, no existe una conexion entre algunos nodos, basandonos en esto podremos deducir la la red es de mundo pequeño
+```
